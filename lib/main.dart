@@ -1,125 +1,141 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      title: 'Chat Simple',
+      theme: ThemeData.dark(),  // Tema oscuro
+      debugShowCheckedModeBanner: false,  // Ocultar el banner "DEBUG"
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  TextEditingController _controller = TextEditingController();
+  List<Map<String, dynamic>> _messages = [];  // Lista para almacenar los mensajes y posibles imágenes
+  Random _random = Random();
 
-  void _incrementCounter() {
+  Future<void> _sendMessage() async {
+    String userMessage = _controller.text;
+
+    // Guardar el mensaje del usuario en la lista de mensajes
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _messages.add({'sender': 'user', 'message': userMessage});
+      _controller.clear();  // Limpiar el campo de texto después de enviar el mensaje
     });
+
+    // Decidir si forzar la respuesta a "maybe" 1 de cada 10 veces
+    bool forceMaybe = _random.nextInt(10) == 9;  // 1 de cada 10 veces será true
+    String apiUrl = forceMaybe
+        ? 'https://yesno.wtf/api?force=maybe'
+        : 'https://yesno.wtf/api';
+
+    // Realizar la petición a la API
+    var url = Uri.parse(apiUrl);
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      String apiResponse = jsonResponse['answer'];  // Obtener la respuesta de la API
+      String gifUrl = jsonResponse['image'];  // Obtener el GIF de la API
+
+      // Guardar la respuesta de la API y el GIF en la lista de mensajes
+      setState(() {
+        _messages.add({'sender': 'api', 'message': apiResponse, 'image': gifUrl});
+      });
+    } else {
+      // En caso de error, mostrar un mensaje de error
+      setState(() {
+        _messages.add({'sender': 'api', 'message': 'Error al conectar con la API'});
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
+      backgroundColor: Colors.black,  // Fondo negro
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text("Wasap 2 "),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              reverse: true,  // Para que el mensaje más reciente aparezca abajo
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                final message = _messages[_messages.length - 1 - index];  // Mostrar mensajes en orden inverso
+                return Column(
+                  crossAxisAlignment: message['sender'] == 'user' ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: message['sender'] == 'user' ? Colors.blueAccent : Colors.greenAccent,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          message['message']!,
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ),
+                    if (message['image'] != null)  // Mostrar el GIF si está disponible
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Image.network(
+                          message['image'],
+                          width: 150,
+                          height: 150,
+                        ),
+                      ),
+                  ],
+                );
+              },
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    style: TextStyle(color: Colors.white),  // Texto en blanco
+                    decoration: InputDecoration(
+                      hintText: "Escribe tu mensaje aquí",
+                      hintStyle: TextStyle(color: Colors.grey),  // Placeholder en gris
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: _sendMessage,
+                  child: Text("Enviar"),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
