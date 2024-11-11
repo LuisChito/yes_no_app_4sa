@@ -29,11 +29,12 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
-    flutter:
     sdk: flutter
+
   dio: ^5.7.0  # versión actual
   cupertino_icons: ^1.0.8
   provider: ^6.1.2
+
 
 dev_dependencies:
   flutter_test:
