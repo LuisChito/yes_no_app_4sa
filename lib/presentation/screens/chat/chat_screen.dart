@@ -6,6 +6,8 @@ import 'package:yes_no_app_4sa/presentation/widgets/chat/her_message_bubble.dart
 import 'package:yes_no_app_4sa/presentation/widgets/chat/my_message_bubble.dart';
 import 'package:yes_no_app_4sa/presentation/widgets/shared/message_field_box.dart';
 
+//Resolviendo Bug de GitHub
+
 class ChatScreen extends StatelessWidget {
   
   const ChatScreen({super.key});
@@ -17,11 +19,26 @@ class ChatScreen extends StatelessWidget {
         leading: const Padding(
           padding: EdgeInsets.all(4.0),
           child: CircleAvatar(
-            backgroundImage: NetworkImage('https://images.tagesschau.de/image/d0295fb9-e9c8-4aaf-a603-16b0b9c180e8/AAABkkX3FSs/AAABkZLngyM/1x1-256/sheinbaum-122.jpg'),
+            backgroundImage: NetworkImage('https://i.pinimg.com/736x/a1/53/f7/a153f76a8dca4a88d5206af44ee86d9e.jpg'),
           ),
         ),
-        title: const Text('Mi pinshesha🥰'),
-        centerTitle: true,
+        title: const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Mi Monita Bb", // Nombre de la persona
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "En línea", // Estado "En línea"
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+            ),
+          ],
+        ),
+        centerTitle: false,
       ),
       body: _ChatView(),
     );
@@ -29,39 +46,35 @@ class ChatScreen extends StatelessWidget {
 }
 
 class _ChatView extends StatelessWidget {
-
-
-
   @override
   Widget build(BuildContext context) {
-
     final chatProvider = context.watch<ChatProvider>();
-
 
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10 ),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           children: [
-            Expanded(child: ListView.builder(
-              itemCount: chatProvider.messageList.length,
-              itemBuilder: (context, index) {
-                //Instancia de message que sabrá quien es el mensaje
-                final message = chatProvider.messageList[index];
-                return (message.fromWho  == FromWho.hers )
-                ? HerMessageBubble(message: message)
-                : MyMessageBubble(message: message);
+            Expanded(
+              child: ListView.builder(
+                controller: chatProvider.chatScrollController,
+                itemCount: chatProvider.messageList.length,
+                itemBuilder: (context, index) {
+                  final message = chatProvider.messageList[index];
 
-              
-            })
-            ),
-            
-        /// Caja de Texto de mensajes
-        
-            MessageFieldBox(
-              //Una vez que tiene el valor cambiado, enviao
-              onValue: chatProvider.sendMessage,
+                  return (message.fromWho == FromWho.hers)
+                      ? HerMessageBubble(message: message)
+                      : MyMessageBubble(
+                          message: message,
+                        );
+                },
               ),
+            ),
+
+            // Caja de texto
+            MessageFieldBox(
+              onValue: (value) => chatProvider.sendMessage(value),
+            ),
           ],
         ),
       ),

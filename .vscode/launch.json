@@ -1,0 +1,40 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    //Resolviendo Bug de GitHub
+    "version": "0.2.0",
+    "configurations": [
+         
+        {
+            "name": "yes_no_app_4sa",
+            "cwd": "yes_no_app_4sa",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "yes_no_app_4sa (profile mode)",
+            "cwd": "yes_no_app_4sa",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "yes_no_app_4sa (release mode)",
+            "cwd": "yes_no_app_4sa",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+
+        {
+                
+            "name": "yes_no_app_4sa web",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "args": ["-d", "chrome", "--web-browser-flag", "--disable-web-security"]
+        }
+    ]
+}
+    

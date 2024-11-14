@@ -1,16 +1,58 @@
-# yes_no_app_4sa
+# Yes/No App
 
-A new Flutter project.
+## Descripción del Proyecto
+Este proyecto, denominado **YesNoApp**, se desarrolló como parte de la asignatura **Tópicos Avanzados de Programación** impartida por el profesor **Rodrigo Glaxiola**.
 
-## Getting Started
+El objetivo principal de esta aplicación es demostrar el uso de **Flutter** para el desarrollo de aplicaciones móviles multiplataforma, haciendo uso de patrones modernos de diseño y gestionando dependencias clave como **provider** y **dio** para garantizar un código limpio, escalable y eficiente.
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## Características del Proyecto
+- **Framework Utilizado:** Flutter
+- **Principales Dependencias:**
+  - `provider`: para la gestión del estado.
+  - `dio`: para realizar peticiones HTTP eficientes.
+  - `flutter_cors`: para la configuración de accesos a APIs.
+  - `intl`: para la internacionalización y manejo de formatos.
+- **Arquitectura:** MVVM (Model-View-ViewModel) para mantener la separación de responsabilidades.
+- **Interfaz:**
+  - Uso de íconos y widgets proporcionados por `cupertino_icons` y Material Design.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Dependencias Principales
+### Instaladas
+- **Dio:** Manejo robusto de peticiones HTTP.
+- **Provider:** Gestión de estado reactiva y fácil de integrar.
+- **Flutter Lints:** Para mantener buenas prácticas en el código.
+- **Intl:** Utilizada para formatear fechas, números y textos en diversos idiomas.
+
+### Desarrollo
+Ejecuta `flutter pub get` para instalar todas las dependencias necesarias del proyecto.
+
+---
+
+## Notas Importantes
+Este proyecto incluye patrones y librerías avanzadas para ilustrar conceptos clave de tópicos avanzados en programación:
+- Buenas prácticas en la estructuración del código.
+- Uso eficiente de patrones de diseño y arquitectura.
+- Manejo robusto de dependencias y estados.
+
+---
+
+## Autor
+**Luis Salazar**  
+Estudiante de **Tópicos Avanzados de Programación**
+
+---
+
+## Profesor
+**Profesor Rodrigo Glaxiola**
+
+---
+
+## Último Commit
+Este README corresponde al último commit del proyecto :)
+
+**¡Gracias por revisar el proyecto!**
+//Resolviendo Bug de GitHub
